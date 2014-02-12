@@ -9,7 +9,8 @@ module Spree
     end
 
     def create
-      favorite = spree_current_user.favorites.new :product_id => params[:id]
+      favorite = spree_current_user.favorites.new(product_id: favorite_params)
+
       if @success = favorite.save
         @message = "Product has been successfully marked as favorite"
       else
@@ -27,8 +28,12 @@ module Spree
     end
 
     private
+      def favorite_params
+        params.required(:id)
+      end
+
       def find_favorite_product
-        @favorite = spree_current_user.favorites.joins(:product).where(:spree_products => {:permalink => params[:id]}).first
+        @favorite = spree_current_user.favorites.find_by_product_id(params[:id])
       end
   end
 end
